@@ -83,4 +83,46 @@ class FriendController extends Controller
             }
         }
     }
+    public function getPendingFriends(){
+        if (auth('sanctum')->check()) {
+            $user_id = auth('sanctum')->user()->id;
+            $friends = Friend::where(function ($query) use ($user_id) {
+                $query->where('user_id', $user_id)
+                    ->orWhere('friend_id', $user_id);
+
+            })->where('status','pending')->get();
+            return response()->json([
+                'status' => 200,
+                'friends' => $friends
+            ]);
+        }else{
+            return response()->json([
+                'status' => 401,
+                'message' => 'Unauthorized'
+            ]);
+        }
+
+    }
+    public function getAcceptedFriends()
+    {
+        if (auth('sanctum')->check()) {
+            $userId = auth('sanctum')->user()->id;
+
+            $friends = Friend::where(function ($query) use ($userId) {
+                $query->where('user_id', $userId)
+                    ->orWhere('friend_id', $userId);
+            })->where('status', 'accepted')->with('user', 'friend')->get();
+
+            return response()->json([
+                'status' => 200,
+                'friends' => $friends,
+            ]);
+        } else {
+            return response()->json([
+                'status' => 401,
+                'message' => 'Unauthorized',
+            ]);
+        }
+    }
+
 }

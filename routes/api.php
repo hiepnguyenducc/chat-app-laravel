@@ -18,18 +18,14 @@ Route::middleware('auth:sanctum')->group(function (){
     Route::post('/add-friends', [FriendController::class, 'store']);
     Route::get('/friends',[ChatListController::class,'viewFriend']);
 
-
-    // Route để tạo phòng chat và thêm người dùng vào phòng chat
     Route::post('chat-rooms', [MessageController::class, 'createChatRoom']);
 
-    // Route để lưu tin nhắn vào phòng chat
     Route::post('messages', [MessageController::class, 'store']);
 
-    // Route để lấy tin nhắn từ phòng chat
     Route::get('chat-rooms/{room_id}/messages', [MessageController::class, 'getMessages']);
-
     Route::post('direct-messages', [DirectMessageController::class, 'sendMessage']);
-
-    // Route để lấy tin nhắn trực tiếp giữa hai người dùng
     Route::get('direct-messages/{user_id}', [DirectMessageController::class, 'getMessages']);
+    Route::get('direct-messages/latest/{userId}',[DirectMessageController::class, 'getLatestMessage']);
+    Route::get('accepted-friends', [FriendController::class, 'getAcceptedFriends']);
+    Route::get('pending-friends', [FriendController::class, 'getPendingFriends']);
 });

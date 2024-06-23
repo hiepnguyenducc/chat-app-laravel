@@ -69,4 +69,30 @@ class DirectMessageController extends Controller
             ]);
         }
     }
+
+    public function getLatestMessage($userId)
+    {
+        if (auth('sanctum')->check()) {
+            $authUserId = auth('sanctum')->user()->id;
+
+            $latestMessage = DirectMessage::where(function ($query) use ($authUserId, $userId) {
+                $query->where('sender_id', $authUserId)
+                    ->where('receiver_id', $userId);
+            })->orWhere(function ($query) use ($authUserId, $userId) {
+                $query->where('sender_id', $userId)
+                    ->where('receiver_id', $authUserId);
+            })->orderBy('created_at', 'desc')->first();
+
+            return response()->json([
+                'status' => 200,
+                'message' => $latestMessage,
+            ]);
+        } else {
+            return response()->json([
+                'status' => 401,
+                'message' => 'Unauthorized',
+            ]);
+        }
+    }
+
 }
